@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "moire-test",
+  "version": "1.0.0",
+  "name": "Moire Test",
+  "license": "Apache-2.0",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+    ]
+  },
+  "depends": {
+    "moire": "*"
+  }
+}
