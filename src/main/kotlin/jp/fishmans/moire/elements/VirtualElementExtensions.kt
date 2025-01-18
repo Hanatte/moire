@@ -1,7 +1,9 @@
 package jp.fishmans.moire.elements
 
+import eu.pb4.polymer.virtualentity.api.VirtualEntityUtils
 import eu.pb4.polymer.virtualentity.api.elements.*
 import jp.fishmans.moire.matrices.matrix4f
+import net.minecraft.entity.Entity
 import org.joml.Matrix4f
 
 public inline fun blockDisplayElement(block: BlockDisplayElement.() -> Unit): BlockDisplayElement =
@@ -21,6 +23,9 @@ public inline fun mobAnchorElement(block: MobAnchorElement.() -> Unit): MobAncho
 
 public inline fun textDisplayElement(block: TextDisplayElement.() -> Unit): TextDisplayElement =
     TextDisplayElement().apply(block)
+
+public fun VirtualElement.startRiding(entity: Entity): Unit =
+    VirtualEntityUtils.addVirtualPassenger(entity, *entityIds.toIntArray())
 
 public inline fun DisplayElement.transformation(block: Matrix4f.() -> Unit): Unit = setTransformation(matrix4f(block))
 

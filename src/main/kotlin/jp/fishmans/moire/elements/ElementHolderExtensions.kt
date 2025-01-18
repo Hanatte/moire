@@ -1,6 +1,7 @@
 package jp.fishmans.moire.elements
 
 import eu.pb4.polymer.virtualentity.api.ElementHolder
+import eu.pb4.polymer.virtualentity.api.VirtualEntityUtils
 import eu.pb4.polymer.virtualentity.api.attachment.ChunkAttachment
 import eu.pb4.polymer.virtualentity.api.attachment.EntityAttachment
 import eu.pb4.polymer.virtualentity.api.attachment.HolderAttachment
@@ -39,6 +40,9 @@ public inline fun ElementHolder.onSetAttachment(crossinline block: (HolderAttach
 
 public inline fun ElementHolder.onTick(crossinline block: () -> Unit): Unit =
     (this as ElementHolderExtensions).`moire$addTickListener` { block() }
+
+public fun ElementHolder.startRiding(entity: Entity): Unit =
+    VirtualEntityUtils.addVirtualPassenger(entity, *entityIds.toIntArray())
 
 public fun ElementHolder.chunkAttachment(world: ServerWorld, pos: Vec3d): HolderAttachment =
     ChunkAttachment.of(this, world, pos)
