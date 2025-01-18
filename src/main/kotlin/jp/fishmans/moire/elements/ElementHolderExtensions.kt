@@ -12,6 +12,10 @@ import net.minecraft.server.network.ServerPlayNetworkHandler
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.Vec3d
 
+public var ElementHolder.duration: Int
+    get() = (this as ElementHolderExtensions).`moire$getDuration`()
+    set(value) = (this as ElementHolderExtensions).`moire$setDuration`(value)
+
 public inline fun elementHolder(block: ElementHolder.() -> Unit): ElementHolder = ElementHolder().apply(block)
 
 public inline fun ElementHolder.blockDisplayElement(block: BlockDisplayElement.() -> Unit): BlockDisplayElement =

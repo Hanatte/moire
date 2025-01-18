@@ -20,4 +20,8 @@ public interface ElementHolderExtensions {
     void moire$addEntityRemoveListener(BiConsumer<Entity, Entity.RemovalReason> consumer);
 
     void moire$addTickListener(Runnable runnable);
+
+    int moire$getDuration();
+
+    void moire$setDuration(int duration);
 }

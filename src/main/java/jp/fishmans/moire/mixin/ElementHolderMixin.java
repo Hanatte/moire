@@ -28,6 +28,8 @@ public abstract class ElementHolderMixin implements ElementHolderExtensions {
     private final List<BiConsumer<Entity, Entity.RemovalReason>> moire$entityRemoveListeners = new CopyOnWriteArrayList<>();
     @Unique
     private final List<Runnable> moire$tickListeners = new CopyOnWriteArrayList<>();
+    @Unique
+    private int moire$duration = -1;
 
     @Override
     public void moire$addStartWatchingListener(Consumer<ServerPlayNetworkHandler> consumer) {
@@ -69,5 +71,21 @@ public abstract class ElementHolderMixin implements ElementHolderExtensions {
     @Inject(method = "tick()V", at = @At(value = "TAIL"))
     private void moire$injectTick(CallbackInfo info) {
         moire$tickListeners.forEach(Runnable::run);
+        if (moire$duration > 0) {
+            --moire$duration;
+            if (moire$duration <= 0) {
+                ((ElementHolder) (Object) this).destroy();
+            }
+        }
+    }
+
+    @Override
+    public int moire$getDuration() {
+        return moire$duration;
+    }
+
+    @Override
+    public void moire$setDuration(int duration) {
+        moire$duration = duration;
     }
 }
