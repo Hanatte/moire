@@ -24,13 +24,6 @@ public abstract class ElementHolderMixin implements ElementHolderExtensions {
     private final List<Consumer<@Nullable HolderAttachment>> moire$setAttachmentListeners = new CopyOnWriteArrayList<>();
     @Unique
     private final List<Runnable> moire$tickListeners = new CopyOnWriteArrayList<>();
-    @Unique
-    private int moire$age;
-
-    @Override
-    public int moire$getAge() {
-        return moire$age;
-    }
 
     @Override
     public void moire$addStartWatchingListener(Consumer<ServerPlayNetworkHandler> consumer) {
@@ -62,6 +55,5 @@ public abstract class ElementHolderMixin implements ElementHolderExtensions {
     @Inject(method = "tick()V", at = @At(value = "TAIL"))
     private void moire$injectTick(CallbackInfo info) {
         moire$tickListeners.forEach(Runnable::run);
-        moire$age++;
     }
 }

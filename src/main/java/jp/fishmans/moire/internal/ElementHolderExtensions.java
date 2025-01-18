@@ -8,8 +8,6 @@ import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
 public interface ElementHolderExtensions {
-    int moire$getAge();
-
     void moire$addStartWatchingListener(Consumer<ServerPlayNetworkHandler> consumer);
 
     void moire$addSetAttachmentListener(Consumer<@Nullable HolderAttachment> consumer);
