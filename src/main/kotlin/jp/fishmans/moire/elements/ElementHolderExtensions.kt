@@ -38,6 +38,9 @@ public inline fun ElementHolder.onStartWatching(crossinline block: (ServerPlayNe
 public inline fun ElementHolder.onSetAttachment(crossinline block: (HolderAttachment?) -> Unit): Unit =
     (this as ElementHolderExtensions).`moire$addSetAttachmentListener` { block(it) }
 
+public inline fun ElementHolder.onEntityRemove(crossinline block: (Entity, Entity.RemovalReason) -> Unit): Unit =
+    (this as ElementHolderExtensions).`moire$addEntityRemoveListener` { entity, reason -> block(entity, reason) }
+
 public inline fun ElementHolder.onTick(crossinline block: () -> Unit): Unit =
     (this as ElementHolderExtensions).`moire$addTickListener` { block() }
 
