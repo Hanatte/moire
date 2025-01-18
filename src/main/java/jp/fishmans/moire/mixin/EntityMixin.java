@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = Entity.class)
 public abstract class EntityMixin {
-    @Inject(method = "onRemove", at = @At(value = "HEAD"))
+    @Inject(method = "setRemoved", at = @At(value = "HEAD"))
     private void moire$injectOnRemove(Entity.RemovalReason reason, CallbackInfo info) {
         var entity = (Entity) (Object) this;
         for (var attachment : ((HolderAttachmentHolder) entity).polymerVE$getHolders()) {
