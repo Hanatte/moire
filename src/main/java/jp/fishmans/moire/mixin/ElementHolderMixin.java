@@ -78,6 +78,7 @@ public abstract class ElementHolderMixin implements ElementHolderExtensions {
         for (var element : elementHolder.getElements()) {
             if (element instanceof AbstractElementExtensions extensions) {
                 extensions.moire$setTickCount(extensions.moire$getTickCount() + 1);
+                extensions.moire$getTickListeners().forEach(Runnable::run);
             }
         }
 

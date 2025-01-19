@@ -35,6 +35,9 @@ public inline fun mobAnchorElement(block: MobAnchorElement.() -> Unit): MobAncho
 public inline fun textDisplayElement(block: TextDisplayElement.() -> Unit): TextDisplayElement =
     TextDisplayElement().apply(block)
 
+public inline fun AbstractElement.onTick(crossinline block: () -> Unit): Unit =
+    (this as AbstractElementExtensions).`moire$addTickListener` { block() }
+
 public fun VirtualElement.startRiding(entity: Entity): Unit =
     VirtualEntityUtils.addVirtualPassenger(entity, *entityIds.toIntArray())
 
