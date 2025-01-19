@@ -16,6 +16,12 @@ public var ElementHolder.duration: Int
     get() = (this as ElementHolderExtensions).`moire$getDuration`()
     set(value) = (this as ElementHolderExtensions).`moire$setDuration`(value)
 
+public val ElementHolder.tickCount: Int
+    get() = (this as ElementHolderExtensions).`moire$getTickCount`()
+
+public val ElementHolder.tickIndex: Int
+    get() = tickCount - 1
+
 public inline fun elementHolder(block: ElementHolder.() -> Unit): ElementHolder = ElementHolder().apply(block)
 
 public inline fun ElementHolder.blockDisplayElement(block: BlockDisplayElement.() -> Unit): BlockDisplayElement =

@@ -31,6 +31,8 @@ public abstract class ElementHolderMixin implements ElementHolderExtensions {
     private final List<Runnable> moire$tickListeners = new CopyOnWriteArrayList<>();
     @Unique
     private int moire$duration = -1;
+    @Unique
+    private int moire$tickCount = 0;
 
     @Override
     public void moire$addStartWatchingListener(Consumer<ServerPlayNetworkHandler> consumer) {
@@ -71,8 +73,15 @@ public abstract class ElementHolderMixin implements ElementHolderExtensions {
 
     @Inject(method = "tick()V", at = @At(value = "TAIL"))
     private void moire$injectTick(CallbackInfo info) {
-        moire$tickListeners.forEach(Runnable::run);
+        moire$tickCount++;
         var elementHolder = (ElementHolder) (Object) this;
+        for (var element : elementHolder.getElements()) {
+            if (element instanceof AbstractElementExtensions extensions) {
+                extensions.moire$setTickCount(extensions.moire$getTickCount() + 1);
+            }
+        }
+
+        moire$tickListeners.forEach(Runnable::run);
         for (var element : elementHolder.getElements()) {
             if (element instanceof AbstractElementExtensions extensions) {
                 if (extensions.moire$getDuration() > -1) {
@@ -100,5 +109,10 @@ public abstract class ElementHolderMixin implements ElementHolderExtensions {
     @Override
     public void moire$setDuration(int duration) {
         moire$duration = duration;
+    }
+
+    @Override
+    public int moire$getTickCount() {
+        return moire$tickCount;
     }
 }

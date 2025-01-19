@@ -9,6 +9,8 @@ import org.spongepowered.asm.mixin.Unique;
 public abstract class AbstractElementMixin implements AbstractElementExtensions {
     @Unique
     private int moire$duration = -1;
+    @Unique
+    private int moire$tickCount = 0;
 
     @Override
     public int moire$getDuration() {
@@ -18,5 +20,15 @@ public abstract class AbstractElementMixin implements AbstractElementExtensions 
     @Override
     public void moire$setDuration(int duration) {
         moire$duration = duration;
+    }
+
+    @Override
+    public int moire$getTickCount() {
+        return moire$tickCount;
+    }
+
+    @Override
+    public void moire$setTickCount(int tickCount) {
+        moire$tickCount = tickCount;
     }
 }

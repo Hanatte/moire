@@ -24,4 +24,6 @@ public interface ElementHolderExtensions {
     int moire$getDuration();
 
     void moire$setDuration(int duration);
+
+    int moire$getTickCount();
 }
