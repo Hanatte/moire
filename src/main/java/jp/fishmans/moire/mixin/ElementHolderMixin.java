@@ -75,7 +75,7 @@ public abstract class ElementHolderMixin implements ElementHolderExtensions {
         var elementHolder = (ElementHolder) (Object) this;
         for (var element : elementHolder.getElements()) {
             if (element instanceof AbstractElementExtensions extensions) {
-                if (extensions.moire$getDuration() > 0) {
+                if (extensions.moire$getDuration() > -1) {
                     extensions.moire$setDuration(extensions.moire$getDuration() - 1);
                     if (extensions.moire$getDuration() <= 0) {
                         elementHolder.removeElement(element);
@@ -84,7 +84,7 @@ public abstract class ElementHolderMixin implements ElementHolderExtensions {
             }
         }
 
-        if (moire$duration > 0) {
+        if (moire$duration > -1) {
             --moire$duration;
             if (moire$duration <= 0) {
                 elementHolder.destroy();
