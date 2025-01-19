@@ -9,6 +9,7 @@ import eu.pb4.polymer.virtualentity.api.elements.*
 import jp.fishmans.moire.internal.ElementHolderExtensions
 import net.minecraft.entity.Entity
 import net.minecraft.server.network.ServerPlayNetworkHandler
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.Vec3d
 
@@ -32,17 +33,41 @@ public inline fun ElementHolder.mobAnchorElement(block: MobAnchorElement.() -> U
 public inline fun ElementHolder.textDisplayElement(block: TextDisplayElement.() -> Unit): TextDisplayElement =
     addElement(jp.fishmans.moire.elements.textDisplayElement(block))
 
-public inline fun ElementHolder.onStartWatching(crossinline block: (ServerPlayNetworkHandler) -> Unit): Unit =
-    (this as ElementHolderExtensions).`moire$addStartWatchingListener` { block(it) }
+public class StartWatchingScope(public val networkHandler: ServerPlayNetworkHandler) {
+    public val player: ServerPlayerEntity
+        get() = networkHandler.player
+}
 
-public inline fun ElementHolder.onSetAttachment(crossinline block: (HolderAttachment?) -> Unit): Unit =
-    (this as ElementHolderExtensions).`moire$addSetAttachmentListener` { block(it) }
+public inline fun ElementHolder.onStartWatching(crossinline block: StartWatchingScope.() -> Unit): Unit =
+    (this as ElementHolderExtensions).`moire$addStartWatchingListener` { StartWatchingScope(it).block() }
 
-public inline fun ElementHolder.onEntityRemove(crossinline block: (Entity, Entity.RemovalReason) -> Unit): Unit =
-    (this as ElementHolderExtensions).`moire$addEntityRemoveListener` { entity, reason -> block(entity, reason) }
+public class SetAttachmentScope(public val attachment: HolderAttachment?)
 
-public inline fun ElementHolder.onTick(crossinline block: (Int) -> Unit): Unit =
-    run { var index = 0; (this as ElementHolderExtensions).`moire$addTickListener` { block(index++) } }
+public inline fun ElementHolder.onSetAttachment(crossinline block: SetAttachmentScope.() -> Unit): Unit =
+    (this as ElementHolderExtensions).`moire$addSetAttachmentListener` { SetAttachmentScope(it).block() }
+
+public class EntityRemoveScope(
+    public val entity: Entity,
+    public val reason: Entity.RemovalReason
+)
+
+public inline fun ElementHolder.onEntityRemove(crossinline block: EntityRemoveScope.() -> Unit): Unit =
+    (this as ElementHolderExtensions).`moire$addEntityRemoveListener` { entity, reason ->
+        block(EntityRemoveScope(entity, reason))
+    }
+
+public class TickScope(public val index: Int) {
+    public val isFirst: Boolean
+        get() = index == 0
+
+    public val ordinal: Int
+        get() = index + 1
+}
+
+public inline fun ElementHolder.onTick(crossinline block: TickScope.() -> Unit) {
+    var index = 0
+    (this as ElementHolderExtensions).`moire$addTickListener` { TickScope(index++).block() }
+}
 
 public fun ElementHolder.startRiding(entity: Entity): Unit =
     VirtualEntityUtils.addVirtualPassenger(entity, *entityIds.toIntArray())

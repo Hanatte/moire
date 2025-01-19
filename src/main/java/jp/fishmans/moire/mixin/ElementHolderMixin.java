@@ -2,7 +2,6 @@ package jp.fishmans.moire.mixin;
 
 import eu.pb4.polymer.virtualentity.api.ElementHolder;
 import eu.pb4.polymer.virtualentity.api.attachment.HolderAttachment;
-import jp.fishmans.moire.internal.AbstractElementExtensions;
 import jp.fishmans.moire.internal.ElementHolderExtensions;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -70,11 +69,5 @@ public abstract class ElementHolderMixin implements ElementHolderExtensions {
     @Inject(method = "tick()V", at = @At(value = "TAIL"))
     private void moire$injectTick(CallbackInfo info) {
         moire$tickListeners.forEach(Runnable::run);
-        var elementHolder = (ElementHolder) (Object) this;
-        for (var element : elementHolder.getElements()) {
-            if (element instanceof AbstractElementExtensions extensions) {
-                extensions.moire$getTickListeners().forEach(Runnable::run);
-            }
-        }
     }
 }

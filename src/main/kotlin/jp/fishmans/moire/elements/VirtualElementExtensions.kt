@@ -2,7 +2,6 @@ package jp.fishmans.moire.elements
 
 import eu.pb4.polymer.virtualentity.api.VirtualEntityUtils
 import eu.pb4.polymer.virtualentity.api.elements.*
-import jp.fishmans.moire.internal.AbstractElementExtensions
 import jp.fishmans.moire.matrices.matrix4f
 import net.minecraft.entity.Entity
 import org.joml.Matrix4f
@@ -24,9 +23,6 @@ public inline fun mobAnchorElement(block: MobAnchorElement.() -> Unit): MobAncho
 
 public inline fun textDisplayElement(block: TextDisplayElement.() -> Unit): TextDisplayElement =
     TextDisplayElement().apply(block)
-
-public inline fun AbstractElement.onTick(crossinline block: (Int) -> Unit): Unit =
-    run { var index = 0; (this as AbstractElementExtensions).`moire$addTickListener` { block(index++) } }
 
 public fun VirtualElement.startRiding(entity: Entity): Unit =
     VirtualEntityUtils.addVirtualPassenger(entity, *entityIds.toIntArray())

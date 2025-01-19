@@ -3,7 +3,6 @@
   "package": "jp.fishmans.moire.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "AbstractElementMixin",
     "ElementHolderMixin",
     "EntityMixin"
   ],
