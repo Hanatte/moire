@@ -12,22 +12,6 @@ import net.minecraft.server.network.ServerPlayNetworkHandler
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.Vec3d
 
-public var ElementHolder.duration: Int
-    get() = (this as ElementHolderExtensions).`moire$getDuration`()
-    set(value) = (this as ElementHolderExtensions).`moire$setDuration`(value)
-
-public val ElementHolder.isFirstTick: Boolean
-    get() = tickIndex == 0
-
-public val ElementHolder.tickCount: Int
-    get() = (this as ElementHolderExtensions).`moire$getTickCount`()
-
-public val ElementHolder.tickIndex: Int
-    get() = tickCount - 1
-
-public val ElementHolder.timeElapsed: Int
-    get() = tickCount
-
 public inline fun elementHolder(block: ElementHolder.() -> Unit): ElementHolder = ElementHolder().apply(block)
 
 public inline fun ElementHolder.blockDisplayElement(block: BlockDisplayElement.() -> Unit): BlockDisplayElement =
@@ -57,8 +41,8 @@ public inline fun ElementHolder.onSetAttachment(crossinline block: (HolderAttach
 public inline fun ElementHolder.onEntityRemove(crossinline block: (Entity, Entity.RemovalReason) -> Unit): Unit =
     (this as ElementHolderExtensions).`moire$addEntityRemoveListener` { entity, reason -> block(entity, reason) }
 
-public inline fun ElementHolder.onTick(crossinline block: () -> Unit): Unit =
-    (this as ElementHolderExtensions).`moire$addTickListener` { block() }
+public inline fun ElementHolder.onTick(crossinline block: (Int) -> Unit): Unit =
+    run { var index = 0; (this as ElementHolderExtensions).`moire$addTickListener` { block(index++) } }
 
 public fun ElementHolder.startRiding(entity: Entity): Unit =
     VirtualEntityUtils.addVirtualPassenger(entity, *entityIds.toIntArray())

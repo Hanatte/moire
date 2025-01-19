@@ -7,22 +7,6 @@ import jp.fishmans.moire.matrices.matrix4f
 import net.minecraft.entity.Entity
 import org.joml.Matrix4f
 
-public var AbstractElement.duration: Int
-    get() = (this as AbstractElementExtensions).`moire$getDuration`()
-    set(value) = (this as AbstractElementExtensions).`moire$setDuration`(value)
-
-public val AbstractElement.isFirstTick: Boolean
-    get() = tickIndex == 0
-
-public val AbstractElement.tickCount: Int
-    get() = (this as AbstractElementExtensions).`moire$getTickCount`()
-
-public val AbstractElement.tickIndex: Int
-    get() = tickCount - 1
-
-public val AbstractElement.timeElapsed: Int
-    get() = tickCount
-
 public inline fun blockDisplayElement(block: BlockDisplayElement.() -> Unit): BlockDisplayElement =
     BlockDisplayElement().apply(block)
 
@@ -41,8 +25,8 @@ public inline fun mobAnchorElement(block: MobAnchorElement.() -> Unit): MobAncho
 public inline fun textDisplayElement(block: TextDisplayElement.() -> Unit): TextDisplayElement =
     TextDisplayElement().apply(block)
 
-public inline fun AbstractElement.onTick(crossinline block: () -> Unit): Unit =
-    (this as AbstractElementExtensions).`moire$addTickListener` { block() }
+public inline fun AbstractElement.onTick(crossinline block: (Int) -> Unit): Unit =
+    run { var index = 0; (this as AbstractElementExtensions).`moire$addTickListener` { block(index++) } }
 
 public fun VirtualElement.startRiding(entity: Entity): Unit =
     VirtualEntityUtils.addVirtualPassenger(entity, *entityIds.toIntArray())
