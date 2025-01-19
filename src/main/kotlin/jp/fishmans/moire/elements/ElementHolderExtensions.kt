@@ -78,6 +78,26 @@ public inline fun ElementHolder.onTick(crossinline block: TickScope.() -> Unit) 
     }
 }
 
+public inline fun ElementHolder.runOnceAfter(
+    delay: Int,
+    crossinline block: TickScope.() -> Unit
+): Unit = onTick {
+    if (index >= delay) {
+        block()
+        remove()
+    }
+}
+
+public inline fun ElementHolder.runRepeatedly(
+    interval: Int,
+    delay: Int = 0,
+    crossinline block: TickScope.() -> Unit
+): Unit = onTick {
+    if (index >= delay && (index - delay) % interval == 0) {
+        block()
+    }
+}
+
 public fun ElementHolder.startRiding(entity: Entity): Unit =
     VirtualEntityUtils.addVirtualPassenger(entity, *entityIds.toIntArray())
 
