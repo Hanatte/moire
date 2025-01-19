@@ -56,17 +56,26 @@ public inline fun ElementHolder.onEntityRemove(crossinline block: EntityRemoveSc
         block(EntityRemoveScope(entity, reason))
     }
 
-public class TickScope(public val index: Int) {
+public class TickScope(
+    public val index: Int,
+    private val removeCallback: () -> Unit
+) {
     public val isFirst: Boolean
         get() = index == 0
 
     public val ordinal: Int
         get() = index + 1
+
+    public fun remove(): Unit = removeCallback()
 }
 
 public inline fun ElementHolder.onTick(crossinline block: TickScope.() -> Unit) {
     var index = 0
-    (this as ElementHolderExtensions).`moire$addTickListener` { TickScope(index++).block() }
+    (this as ElementHolderExtensions).`moire$addTickListener` {
+        var removed = false
+        TickScope(index++) { removed = true }.block()
+        !removed
+    }
 }
 
 public fun ElementHolder.startRiding(entity: Entity): Unit =

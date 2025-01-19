@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiConsumer;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 @Mixin(value = ElementHolder.class, remap = false)
@@ -27,7 +28,7 @@ public abstract class ElementHolderMixin implements ElementHolderExtensions {
     @Unique
     private final List<BiConsumer<Entity, Entity.RemovalReason>> moire$entityRemoveListeners = new CopyOnWriteArrayList<>();
     @Unique
-    private final List<Runnable> moire$tickListeners = new CopyOnWriteArrayList<>();
+    private final List<BooleanSupplier> moire$tickListeners = new CopyOnWriteArrayList<>();
 
     @Override
     public void moire$addStartWatchingListener(Consumer<ServerPlayNetworkHandler> consumer) {
@@ -50,8 +51,8 @@ public abstract class ElementHolderMixin implements ElementHolderExtensions {
     }
 
     @Override
-    public void moire$addTickListener(Runnable runnable) {
-        moire$tickListeners.add(runnable);
+    public void moire$addTickListener(BooleanSupplier supplier) {
+        moire$tickListeners.add(supplier);
     }
 
     @Inject(method = "startWatching(Lnet/minecraft/server/network/ServerPlayNetworkHandler;)Z", at = @At(value = "RETURN"))
@@ -68,6 +69,6 @@ public abstract class ElementHolderMixin implements ElementHolderExtensions {
 
     @Inject(method = "tick()V", at = @At(value = "TAIL"))
     private void moire$injectTick(CallbackInfo info) {
-        moire$tickListeners.forEach(Runnable::run);
+        moire$tickListeners.removeIf(supplier -> !supplier.getAsBoolean());
     }
 }

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
@@ -19,5 +20,5 @@ public interface ElementHolderExtensions {
 
     void moire$addEntityRemoveListener(BiConsumer<Entity, Entity.RemovalReason> consumer);
 
-    void moire$addTickListener(Runnable runnable);
+    void moire$addTickListener(BooleanSupplier supplier);
 }
