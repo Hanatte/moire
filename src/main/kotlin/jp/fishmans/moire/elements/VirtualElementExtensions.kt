@@ -11,11 +11,17 @@ public var AbstractElement.duration: Int
     get() = (this as AbstractElementExtensions).`moire$getDuration`()
     set(value) = (this as AbstractElementExtensions).`moire$setDuration`(value)
 
+public val AbstractElement.isFirstTick: Boolean
+    get() = tickIndex == 0
+
 public val AbstractElement.tickCount: Int
     get() = (this as AbstractElementExtensions).`moire$getTickCount`()
 
 public val AbstractElement.tickIndex: Int
     get() = tickCount - 1
+
+public val AbstractElement.timeElapsed: Int
+    get() = tickCount
 
 public inline fun blockDisplayElement(block: BlockDisplayElement.() -> Unit): BlockDisplayElement =
     BlockDisplayElement().apply(block)
