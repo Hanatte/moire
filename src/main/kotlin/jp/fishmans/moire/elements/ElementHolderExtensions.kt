@@ -33,20 +33,24 @@ public inline fun ElementHolder.mobAnchorElement(block: MobAnchorElement.() -> U
 public inline fun ElementHolder.textDisplayElement(block: TextDisplayElement.() -> Unit): TextDisplayElement =
     addElement(jp.fishmans.moire.elements.textDisplayElement(block))
 
-public class StartWatchingScope(public val networkHandler: ServerPlayNetworkHandler) {
-    public val player: ServerPlayerEntity
-        get() = networkHandler.player
-}
+public class StartWatchingScope @PublishedApi internal constructor(
+    public val networkHandler: ServerPlayNetworkHandler
+)
+
+public val StartWatchingScope.player: ServerPlayerEntity
+    get() = networkHandler.player
 
 public inline fun ElementHolder.onStartWatching(crossinline block: StartWatchingScope.() -> Unit): Unit =
     (this as ElementHolderExtensions).`moire$addStartWatchingListener` { StartWatchingScope(it).block() }
 
-public class SetAttachmentScope(public val attachment: HolderAttachment?)
+public class SetAttachmentScope @PublishedApi internal constructor(
+    public val attachment: HolderAttachment?
+)
 
 public inline fun ElementHolder.onSetAttachment(crossinline block: SetAttachmentScope.() -> Unit): Unit =
     (this as ElementHolderExtensions).`moire$addSetAttachmentListener` { SetAttachmentScope(it).block() }
 
-public class EntityRemoveScope(
+public class EntityRemoveScope @PublishedApi internal constructor(
     public val entity: Entity,
     public val reason: Entity.RemovalReason
 )
@@ -56,33 +60,45 @@ public inline fun ElementHolder.onEntityRemove(crossinline block: EntityRemoveSc
         EntityRemoveScope(entity, reason).block()
     }
 
-public class TickScope(
-    public val index: Int,
-    private val cancelCallback: () -> Unit
-) {
-    public val isFirst: Boolean
-        get() = index == 0
+public class TickScope @PublishedApi internal constructor() {
+    public var isCancelled: Boolean = false
+        private set
 
-    public val ordinal: Int
-        get() = index + 1
+    public var index: Int = 0
+        private set
 
-    public fun cancel(): Unit = cancelCallback()
+    public fun cancel() {
+        isCancelled = true
+    }
+
+    @PublishedApi
+    internal fun incrementIndex() {
+        index++
+    }
 }
+
+public val TickScope.isFirst: Boolean
+    get() = index == 0
+
+public val TickScope.ordinal: Int
+    get() = index + 1
 
 public inline fun ElementHolder.onTick(
     dependent: VirtualElement? = null,
     crossinline block: TickScope.() -> Unit
-) {
-    var index = 0
+): TickScope {
+    val scope = TickScope()
     (this as ElementHolderExtensions).`moire$addTickListener` {
         if (dependent != null && dependent !in elements) {
             false
         } else {
-            var cancel = false
-            TickScope(index++) { cancel = true }.block()
-            !cancel
+            scope.block()
+            scope.incrementIndex()
+            !scope.isCancelled
         }
     }
+
+    return scope
 }
 
 public fun ElementHolder.startRiding(entity: Entity): Unit =
