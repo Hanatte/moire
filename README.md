@@ -4,6 +4,9 @@
 for [polymer-virtual-entity](https://github.com/Patbox/polymer). With moire, you can easily create and manage
 `ElementHolder` instance.
 
+> **Note:** The API is subject to change without backward compatibility until version 1.0.0. Please be aware of
+> potential changes.
+
 ## Usage
 
 Here is a simple example.
