@@ -69,19 +69,27 @@ public class TickScope(
     public fun remove(): Unit = removeCallback()
 }
 
-public inline fun ElementHolder.onTick(crossinline block: TickScope.() -> Unit) {
+public inline fun ElementHolder.onTick(
+    dependent: VirtualElement? = null,
+    crossinline block: TickScope.() -> Unit
+) {
     var index = 0
     (this as ElementHolderExtensions).`moire$addTickListener` {
-        var removed = false
-        TickScope(index++) { removed = true }.block()
-        !removed
+        if (dependent != null && dependent !in elements) {
+            false
+        } else {
+            var removed = false
+            TickScope(index++) { removed = true }.block()
+            !removed
+        }
     }
 }
 
 public inline fun ElementHolder.runOnceAfter(
     delay: Int,
+    dependent: VirtualElement? = null,
     crossinline block: TickScope.() -> Unit
-): Unit = onTick {
+): Unit = onTick(dependent) {
     if (index >= delay) {
         block()
         remove()
@@ -91,8 +99,9 @@ public inline fun ElementHolder.runOnceAfter(
 public inline fun ElementHolder.runRepeatedly(
     interval: Int,
     delay: Int = 0,
+    dependent: VirtualElement? = null,
     crossinline block: TickScope.() -> Unit
-): Unit = onTick {
+): Unit = onTick(dependent) {
     if (index >= delay && (index - delay) % interval == 0) {
         block()
     }
