@@ -2,6 +2,7 @@ package jp.fishmans.moire.mixin;
 
 import eu.pb4.polymer.virtualentity.api.ElementHolder;
 import eu.pb4.polymer.virtualentity.api.attachment.HolderAttachment;
+import jp.fishmans.moire.internal.AbstractElementExtensions;
 import jp.fishmans.moire.internal.ElementHolderExtensions;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -71,10 +72,22 @@ public abstract class ElementHolderMixin implements ElementHolderExtensions {
     @Inject(method = "tick()V", at = @At(value = "TAIL"))
     private void moire$injectTick(CallbackInfo info) {
         moire$tickListeners.forEach(Runnable::run);
+        var elementHolder = (ElementHolder) (Object) this;
+        for (var element : elementHolder.getElements()) {
+            if (element instanceof AbstractElementExtensions extensions) {
+                if (extensions.moire$getDuration() > 0) {
+                    extensions.moire$setDuration(extensions.moire$getDuration() - 1);
+                    if (extensions.moire$getDuration() <= 0) {
+                        elementHolder.removeElement(element);
+                    }
+                }
+            }
+        }
+
         if (moire$duration > 0) {
             --moire$duration;
             if (moire$duration <= 0) {
-                ((ElementHolder) (Object) this).destroy();
+                elementHolder.destroy();
             }
         }
     }

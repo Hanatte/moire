@@ -2,9 +2,14 @@ package jp.fishmans.moire.elements
 
 import eu.pb4.polymer.virtualentity.api.VirtualEntityUtils
 import eu.pb4.polymer.virtualentity.api.elements.*
+import jp.fishmans.moire.internal.AbstractElementExtensions
 import jp.fishmans.moire.matrices.matrix4f
 import net.minecraft.entity.Entity
 import org.joml.Matrix4f
+
+public var AbstractElement.duration: Int
+    get() = (this as AbstractElementExtensions).`moire$getDuration`()
+    set(value) = (this as AbstractElementExtensions).`moire$setDuration`(value)
 
 public inline fun blockDisplayElement(block: BlockDisplayElement.() -> Unit): BlockDisplayElement =
     BlockDisplayElement().apply(block)
