@@ -53,12 +53,12 @@ public class EntityRemoveScope(
 
 public inline fun ElementHolder.onEntityRemove(crossinline block: EntityRemoveScope.() -> Unit): Unit =
     (this as ElementHolderExtensions).`moire$addEntityRemoveListener` { entity, reason ->
-        block(EntityRemoveScope(entity, reason))
+        EntityRemoveScope(entity, reason).block()
     }
 
 public class TickScope(
     public val index: Int,
-    private val removeCallback: () -> Unit
+    private val cancelCallback: () -> Unit
 ) {
     public val isFirst: Boolean
         get() = index == 0
@@ -66,7 +66,7 @@ public class TickScope(
     public val ordinal: Int
         get() = index + 1
 
-    public fun remove(): Unit = removeCallback()
+    public fun cancel(): Unit = cancelCallback()
 }
 
 public inline fun ElementHolder.onTick(
@@ -78,9 +78,9 @@ public inline fun ElementHolder.onTick(
         if (dependent != null && dependent !in elements) {
             false
         } else {
-            var removed = false
-            TickScope(index++) { removed = true }.block()
-            !removed
+            var cancel = false
+            TickScope(index++) { cancel = true }.block()
+            !cancel
         }
     }
 }
