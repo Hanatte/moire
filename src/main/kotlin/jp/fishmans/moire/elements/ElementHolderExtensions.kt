@@ -6,12 +6,22 @@ import eu.pb4.polymer.virtualentity.api.attachment.ChunkAttachment
 import eu.pb4.polymer.virtualentity.api.attachment.EntityAttachment
 import eu.pb4.polymer.virtualentity.api.attachment.HolderAttachment
 import eu.pb4.polymer.virtualentity.api.elements.*
-import jp.fishmans.moire.internal.ElementHolderExtensions
+import jp.fishmans.moire.element.ElementHolderExtensions
+import jp.fishmans.moire.element.listener.AttachmentRemovedListener
+import jp.fishmans.moire.element.listener.AttachmentSetListener
+import jp.fishmans.moire.element.listener.Listener
+import jp.fishmans.moire.element.listener.PostTickListener
+import jp.fishmans.moire.element.listener.PreTickListener
+import jp.fishmans.moire.element.listener.WatchingStartedListener
+import jp.fishmans.moire.element.listener.WatchingStoppedListener
+import jp.fishmans.moire.element.listener.entity.EntityPostRemoveListener
+import jp.fishmans.moire.element.listener.entity.EntityPreRemoveListener
 import net.minecraft.entity.Entity
 import net.minecraft.server.network.ServerPlayNetworkHandler
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.Vec3d
+import kotlin.reflect.KClass
 
 public inline fun elementHolder(block: ElementHolder.() -> Unit): ElementHolder = ElementHolder().apply(block)
 
@@ -33,73 +43,109 @@ public inline fun ElementHolder.mobAnchorElement(block: MobAnchorElement.() -> U
 public inline fun ElementHolder.textDisplayElement(block: TextDisplayElement.() -> Unit): TextDisplayElement =
     addElement(jp.fishmans.moire.elements.textDisplayElement(block))
 
-public class StartWatchingScope @PublishedApi internal constructor(
-    public val networkHandler: ServerPlayNetworkHandler
-)
+public fun <T : Listener> ElementHolder.addListener(listenerClass: Class<T>, listener: T): Unit =
+    (this as ElementHolderExtensions).`moire$addListener`(listenerClass, listener)
 
-public val StartWatchingScope.player: ServerPlayerEntity
-    get() = networkHandler.player
+public fun <T : Listener> ElementHolder.addListener(listenerClass: KClass<T>, listener: T): Unit =
+    addListener(listenerClass.java, listener)
 
-public inline fun ElementHolder.onStartWatching(crossinline block: StartWatchingScope.() -> Unit): Unit =
-    (this as ElementHolderExtensions).`moire$addStartWatchingListener` { StartWatchingScope(it).block() }
+public fun <T : Listener> ElementHolder.removeListener(listenerClass: Class<T>, listener: T): Unit =
+    (this as ElementHolderExtensions).`moire$removeListener`(listenerClass, listener)
 
-public class SetAttachmentScope @PublishedApi internal constructor(
-    public val attachment: HolderAttachment?
-)
+public fun <T : Listener> ElementHolder.removeListener(listenerClass: KClass<T>, listener: T): Unit =
+    removeListener(listenerClass.java, listener)
 
-public inline fun ElementHolder.onSetAttachment(crossinline block: SetAttachmentScope.() -> Unit): Unit =
-    (this as ElementHolderExtensions).`moire$addSetAttachmentListener` { SetAttachmentScope(it).block() }
+public fun <T : Listener> ElementHolder.listen(listenerClass: Class<T>, listener: T): T =
+    listener.also { addListener(listenerClass, it) }
+
+public fun <T : Listener> ElementHolder.listen(listenerClass: KClass<T>, listener: T): T =
+    listener.also { addListener(listenerClass, it) }
 
 public class EntityRemoveScope @PublishedApi internal constructor(
     public val entity: Entity,
     public val reason: Entity.RemovalReason
 )
 
-public inline fun ElementHolder.onEntityRemove(crossinline block: EntityRemoveScope.() -> Unit): Unit =
-    (this as ElementHolderExtensions).`moire$addEntityRemoveListener` { entity, reason ->
-        EntityRemoveScope(entity, reason).block()
-    }
+public inline fun ElementHolder.onEntityPreRemove(crossinline block: EntityRemoveScope.() -> Unit): EntityPreRemoveListener =
+    listen(
+        EntityPreRemoveListener::class,
+        EntityPreRemoveListener { entity, reason -> EntityRemoveScope(entity, reason).block() }
+    )
 
-public class TickScope @PublishedApi internal constructor() {
-    public var isCancelled: Boolean = false
-        private set
+public inline fun ElementHolder.onEntityPostRemove(crossinline block: EntityRemoveScope.() -> Unit): EntityPostRemoveListener =
+    listen(
+        EntityPostRemoveListener::class,
+        EntityPostRemoveListener { entity, reason -> EntityRemoveScope(entity, reason).block() }
+    )
 
-    public var index: Int = 0
-        private set
+public class AttachmentRemovedScope @PublishedApi internal constructor(
+    public val oldAttachment: HolderAttachment
+)
 
-    public fun cancel() {
-        isCancelled = true
-    }
+public inline fun ElementHolder.onAttachmentRemoved(crossinline block: AttachmentRemovedScope.() -> Unit): AttachmentRemovedListener =
+    listen(
+        AttachmentRemovedListener::class,
+        AttachmentRemovedListener { oldAttachment -> AttachmentRemovedScope(oldAttachment).block() }
+    )
 
-    @PublishedApi
-    internal fun incrementIndex() {
-        index++
-    }
+public class AttachmentSetScope @PublishedApi internal constructor(
+    public val attachment: HolderAttachment,
+    public val oldAttachment: HolderAttachment?
+)
+
+public inline fun ElementHolder.onAttachmentSet(crossinline block: AttachmentSetScope.() -> Unit): AttachmentSetListener =
+    listen(
+        AttachmentSetListener::class,
+        AttachmentSetListener { attachment, oldAttachment -> AttachmentSetScope(attachment, oldAttachment).block() }
+    )
+
+public class WatchingScope @PublishedApi internal constructor(
+    public val networkHandler: ServerPlayNetworkHandler
+) {
+    public val player: ServerPlayerEntity
+        get() = networkHandler.player
 }
 
-public val TickScope.isFirst: Boolean
-    get() = index == 0
+public inline fun ElementHolder.onWatchingStarted(crossinline block: WatchingScope.() -> Unit): WatchingStartedListener =
+    listen(
+        WatchingStartedListener::class,
+        WatchingStartedListener { networkHandler -> WatchingScope(networkHandler).block() }
+    )
 
-public val TickScope.ordinal: Int
-    get() = index + 1
+public inline fun ElementHolder.onWatchingStopped(crossinline block: WatchingScope.() -> Unit): WatchingStoppedListener =
+    listen(
+        WatchingStoppedListener::class,
+        WatchingStoppedListener { networkHandler -> WatchingScope(networkHandler).block() }
+    )
 
-public inline fun ElementHolder.onTick(
-    dependent: VirtualElement? = null,
-    crossinline block: TickScope.() -> Unit
-): TickScope {
-    val scope = TickScope()
-    (this as ElementHolderExtensions).`moire$addTickListener` {
-        if (dependent != null && dependent !in elements) {
-            false
-        } else {
-            scope.block()
-            scope.incrementIndex()
-            !scope.isCancelled
-        }
-    }
+public class TickScope @PublishedApi internal constructor(
+    public val index: Int
+) {
+    public val isFirst: Boolean
+        get() = index == 0
 
-    return scope
+    public val ordinal: Int
+        get() = index + 1
 }
+
+public inline fun ElementHolder.onPreTick(crossinline block: TickScope.() -> Unit): PreTickListener {
+    var index = 0
+    return listen(
+        PreTickListener::class,
+        PreTickListener { TickScope(index++).block() }
+    )
+}
+
+public inline fun ElementHolder.onPostTick(crossinline block: TickScope.() -> Unit): PostTickListener {
+    var index = 0
+    return listen(
+        PostTickListener::class,
+        PostTickListener { TickScope(index++).block() }
+    )
+}
+
+public inline fun ElementHolder.onTick(crossinline block: TickScope.() -> Unit): PreTickListener =
+    onPreTick(block)
 
 public fun ElementHolder.startRiding(entity: Entity): Unit =
     VirtualEntityUtils.addVirtualPassenger(entity, *entityIds.toIntArray())
