@@ -69,6 +69,10 @@ public abstract class ElementHolderMixin implements ElementHolderExtensions {
 
     @Inject(method = "tick()V", at = @At(value = "TAIL"))
     private void moire$injectTick(CallbackInfo info) {
-        moire$tickListeners.removeIf(supplier -> !supplier.getAsBoolean());
+        moire$tickListeners.removeAll(
+                moire$tickListeners.stream()
+                        .filter(supplier -> !supplier.getAsBoolean())
+                        .toList()
+        );
     }
 }
