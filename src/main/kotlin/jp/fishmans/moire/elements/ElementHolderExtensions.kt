@@ -7,13 +7,7 @@ import eu.pb4.polymer.virtualentity.api.attachment.EntityAttachment
 import eu.pb4.polymer.virtualentity.api.attachment.HolderAttachment
 import eu.pb4.polymer.virtualentity.api.elements.*
 import jp.fishmans.moire.element.ElementHolderExtensions
-import jp.fishmans.moire.element.listener.AttachmentRemovedListener
-import jp.fishmans.moire.element.listener.AttachmentSetListener
-import jp.fishmans.moire.element.listener.Listener
-import jp.fishmans.moire.element.listener.PostTickListener
-import jp.fishmans.moire.element.listener.PreTickListener
-import jp.fishmans.moire.element.listener.WatchingStartedListener
-import jp.fishmans.moire.element.listener.WatchingStoppedListener
+import jp.fishmans.moire.element.listener.*
 import jp.fishmans.moire.element.listener.entity.EntityPostRemoveListener
 import jp.fishmans.moire.element.listener.entity.EntityPreRemoveListener
 import net.minecraft.entity.Entity
@@ -22,7 +16,6 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
-import kotlin.reflect.KClass
 
 public val ElementHolder.blockDisplayElements: List<BlockDisplayElement>
     get() = elements.filterIsInstance<BlockDisplayElement>()
@@ -107,23 +100,24 @@ public fun ElementHolder.simpleEntityElements(block: SimpleEntityElement.() -> U
 public fun ElementHolder.textDisplayElements(block: TextDisplayElement.() -> Unit): Unit =
     textDisplayElements.forEach(block)
 
-public fun <T : Listener> ElementHolder.addListener(listenerClass: Class<T>, listener: T): Unit =
-    (this as ElementHolderExtensions).`moire$addListener`(listenerClass, listener)
+public fun ElementHolder.addListener(listener: Listener): Unit =
+    (this as ElementHolderExtensions).`moire$addListener`(listener)
 
-public fun <T : Listener> ElementHolder.addListener(listenerClass: KClass<T>, listener: T): Unit =
-    addListener(listenerClass.java, listener)
+public fun ElementHolder.removeListener(listener: Listener): Unit =
+    (this as ElementHolderExtensions).`moire$removeListener`(listener)
 
-public fun <T : Listener> ElementHolder.removeListener(listenerClass: Class<T>, listener: T): Unit =
-    (this as ElementHolderExtensions).`moire$removeListener`(listenerClass, listener)
+public fun <T : Listener> ElementHolder.subscribe(listener: T): T =
+    listener.also { addListener(it) }
 
-public fun <T : Listener> ElementHolder.removeListener(listenerClass: KClass<T>, listener: T): Unit =
-    removeListener(listenerClass.java, listener)
+public fun <T : Listener> ElementHolder.unsubscribe(listener: T): T =
+    listener.also { removeListener(it) }
 
-public fun <T : Listener> ElementHolder.listen(listenerClass: Class<T>, listener: T): T =
-    listener.also { addListener(listenerClass, it) }
-
-public fun <T : Listener> ElementHolder.listen(listenerClass: KClass<T>, listener: T): T =
-    listener.also { addListener(listenerClass, it) }
+@Deprecated(
+    message = "Use 'subscribe(listener)' instead.",
+    replaceWith = ReplaceWith("subscribe(listener)")
+)
+public fun <T : Listener> ElementHolder.listen(listener: T): T =
+    subscribe(listener)
 
 public class EntityRemoveScope @PublishedApi internal constructor(
     public val entity: Entity,
@@ -131,26 +125,17 @@ public class EntityRemoveScope @PublishedApi internal constructor(
 )
 
 public inline fun ElementHolder.onEntityPreRemove(crossinline block: EntityRemoveScope.() -> Unit): EntityPreRemoveListener =
-    listen(
-        EntityPreRemoveListener::class,
-        EntityPreRemoveListener { entity, reason -> EntityRemoveScope(entity, reason).block() }
-    )
+    subscribe(EntityPreRemoveListener { entity, reason -> EntityRemoveScope(entity, reason).block() })
 
 public inline fun ElementHolder.onEntityPostRemove(crossinline block: EntityRemoveScope.() -> Unit): EntityPostRemoveListener =
-    listen(
-        EntityPostRemoveListener::class,
-        EntityPostRemoveListener { entity, reason -> EntityRemoveScope(entity, reason).block() }
-    )
+    subscribe(EntityPostRemoveListener { entity, reason -> EntityRemoveScope(entity, reason).block() })
 
 public class AttachmentRemovedScope @PublishedApi internal constructor(
     public val oldAttachment: HolderAttachment
 )
 
 public inline fun ElementHolder.onAttachmentRemoved(crossinline block: AttachmentRemovedScope.() -> Unit): AttachmentRemovedListener =
-    listen(
-        AttachmentRemovedListener::class,
-        AttachmentRemovedListener { oldAttachment -> AttachmentRemovedScope(oldAttachment).block() }
-    )
+    subscribe(AttachmentRemovedListener { oldAttachment -> AttachmentRemovedScope(oldAttachment).block() })
 
 public class AttachmentSetScope @PublishedApi internal constructor(
     public val attachment: HolderAttachment,
@@ -158,10 +143,7 @@ public class AttachmentSetScope @PublishedApi internal constructor(
 )
 
 public inline fun ElementHolder.onAttachmentSet(crossinline block: AttachmentSetScope.() -> Unit): AttachmentSetListener =
-    listen(
-        AttachmentSetListener::class,
-        AttachmentSetListener { attachment, oldAttachment -> AttachmentSetScope(attachment, oldAttachment).block() }
-    )
+    subscribe(AttachmentSetListener { attachment, oldAttachment -> AttachmentSetScope(attachment, oldAttachment).block() })
 
 public class WatchingScope @PublishedApi internal constructor(
     public val networkHandler: ServerPlayNetworkHandler
@@ -171,16 +153,10 @@ public class WatchingScope @PublishedApi internal constructor(
 }
 
 public inline fun ElementHolder.onWatchingStarted(crossinline block: WatchingScope.() -> Unit): WatchingStartedListener =
-    listen(
-        WatchingStartedListener::class,
-        WatchingStartedListener { networkHandler -> WatchingScope(networkHandler).block() }
-    )
+    subscribe(WatchingStartedListener { networkHandler -> WatchingScope(networkHandler).block() })
 
 public inline fun ElementHolder.onWatchingStopped(crossinline block: WatchingScope.() -> Unit): WatchingStoppedListener =
-    listen(
-        WatchingStoppedListener::class,
-        WatchingStoppedListener { networkHandler -> WatchingScope(networkHandler).block() }
-    )
+    subscribe(WatchingStoppedListener { networkHandler -> WatchingScope(networkHandler).block() })
 
 public class TickScope @PublishedApi internal constructor(
     public val index: Int
@@ -194,18 +170,12 @@ public class TickScope @PublishedApi internal constructor(
 
 public inline fun ElementHolder.onPreTick(crossinline block: TickScope.() -> Unit): PreTickListener {
     var index = 0
-    return listen(
-        PreTickListener::class,
-        PreTickListener { TickScope(index++).block() }
-    )
+    return subscribe(PreTickListener { TickScope(index++).block() })
 }
 
 public inline fun ElementHolder.onPostTick(crossinline block: TickScope.() -> Unit): PostTickListener {
     var index = 0
-    return listen(
-        PostTickListener::class,
-        PostTickListener { TickScope(index++).block() }
-    )
+    return subscribe(PostTickListener { TickScope(index++).block() })
 }
 
 public inline fun ElementHolder.onTick(crossinline block: TickScope.() -> Unit): PreTickListener =

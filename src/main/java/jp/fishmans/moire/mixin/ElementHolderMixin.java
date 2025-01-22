@@ -14,35 +14,30 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 @Mixin(value = ElementHolder.class, remap = false)
 public abstract class ElementHolderMixin implements ElementHolderExtensions {
     @Unique
-    private final Map<Class<? extends Listener>, List<Listener>> moire$listenersMap = new ConcurrentHashMap<>();
+    private final List<Listener> moire$listeners = new CopyOnWriteArrayList<>();
 
     @Override
-    public <T extends Listener> void moire$addListener(Class<T> listenerClass, T listener) {
-        moire$listenersMap.computeIfAbsent(listenerClass, key -> new CopyOnWriteArrayList<>()).add(listener);
+    public void moire$addListener(Listener listener) {
+        moire$listeners.add(listener);
     }
 
     @Override
-    public <T extends Listener> void moire$removeListener(Class<T> listenerClass, T listener) {
-        var listeners = moire$listenersMap.get(listenerClass);
-        if (listeners != null) {
-            listeners.remove(listener);
-        }
+    public void moire$removeListener(Listener listener) {
+        moire$listeners.remove(listener);
     }
 
     @Override
     public <T extends Listener> void moire$triggerEvent(Class<T> listenerClass, Consumer<T> consumer) {
-        var listeners = moire$listenersMap.get(listenerClass);
-        if (listeners != null) {
-            listeners.stream().map(listenerClass::cast).forEach(consumer);
-        }
+        moire$listeners.stream()
+                .filter(listenerClass::isInstance)
+                .map(listenerClass::cast)
+                .forEach(consumer);
     }
 
     @Inject(method = "startWatching(Lnet/minecraft/server/network/ServerPlayNetworkHandler;)Z", at = @At(value = "RETURN"))
