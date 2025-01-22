@@ -20,6 +20,7 @@ import net.minecraft.entity.Entity
 import net.minecraft.server.network.ServerPlayNetworkHandler
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import kotlin.reflect.KClass
 
@@ -190,14 +191,39 @@ public inline fun ElementHolder.onTick(crossinline block: TickScope.() -> Unit):
 public fun ElementHolder.startRiding(entity: Entity): Unit =
     VirtualEntityUtils.addVirtualPassenger(entity, *entityIds.toIntArray())
 
+public fun ElementHolder.chunkAttachment(world: ServerWorld, pos: Vec3d, isTicking: Boolean = false): HolderAttachment =
+    if (isTicking) ChunkAttachment.ofTicking(this, world, pos) else ChunkAttachment.of(this, world, pos)
+
+public fun ElementHolder.chunkAttachment(world: ServerWorld, pos: BlockPos, isTicking: Boolean = false): HolderAttachment =
+    if (isTicking) ChunkAttachment.ofTicking(this, world, pos) else ChunkAttachment.of(this, world, pos)
+
+public fun ElementHolder.entityAttachment(entity: Entity, isTicking: Boolean = false): EntityAttachment =
+    if (isTicking) EntityAttachment.ofTicking(this, entity) else EntityAttachment.of(this, entity)
+
+@Deprecated(
+    message = "Use 'chunkAttachment(world, pos, isTicking)' instead.",
+    replaceWith = ReplaceWith("chunkAttachment(world, pos, false)")
+)
 public fun ElementHolder.chunkAttachment(world: ServerWorld, pos: Vec3d): HolderAttachment =
     ChunkAttachment.of(this, world, pos)
 
+@Deprecated(
+    message = "Use 'chunkAttachment(world, pos, isTicking)' instead.",
+    replaceWith = ReplaceWith("chunkAttachment(world, pos, true)")
+)
 public fun ElementHolder.chunkAttachmentTicking(world: ServerWorld, pos: Vec3d): HolderAttachment =
     ChunkAttachment.ofTicking(this, world, pos)
 
+@Deprecated(
+    message = "Use 'entityAttachment(entity, isTicking)' instead.",
+    replaceWith = ReplaceWith("entityAttachment(entity, false)")
+)
 public fun ElementHolder.entityAttachment(entity: Entity): EntityAttachment =
     EntityAttachment.of(this, entity)
 
+@Deprecated(
+    message = "Use 'entityAttachment(entity, isTicking)' instead.",
+    replaceWith = ReplaceWith("entityAttachment(entity, true)")
+)
 public fun ElementHolder.entityAttachmentTicking(entity: Entity): EntityAttachment =
     EntityAttachment.ofTicking(this, entity)
