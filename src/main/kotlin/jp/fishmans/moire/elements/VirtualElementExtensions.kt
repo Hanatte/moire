@@ -4,7 +4,8 @@ import eu.pb4.polymer.virtualentity.api.VirtualEntityUtils
 import eu.pb4.polymer.virtualentity.api.elements.*
 import jp.fishmans.moire.matrices.matrix4f
 import net.minecraft.entity.Entity
-import org.joml.Matrix4f
+import org.joml.*
+import java.nio.FloatBuffer
 
 public inline fun blockDisplayElement(block: BlockDisplayElement.() -> Unit): BlockDisplayElement =
     BlockDisplayElement().apply(block)
@@ -32,6 +33,21 @@ public fun VirtualElement.startRiding(entity: Entity): Unit =
     VirtualEntityUtils.addVirtualPassenger(entity, *entityIds.toIntArray())
 
 public inline fun DisplayElement.transformation(block: Matrix4f.() -> Unit): Unit = setTransformation(matrix4f(block))
+
+public inline fun DisplayElement.transformation(from: Matrix3fc, block: Matrix4f.() -> Unit): Unit =
+    setTransformation(matrix4f(from, block))
+
+public inline fun DisplayElement.transformation(from: Matrix4fc, block: Matrix4f.() -> Unit): Unit =
+    setTransformation(matrix4f(from, block))
+
+public inline fun DisplayElement.transformation(from: Matrix4x3fc, block: Matrix4f.() -> Unit): Unit =
+    setTransformation(matrix4f(from, block))
+
+public inline fun DisplayElement.transformation(from: Matrix4dc, block: Matrix4f.() -> Unit): Unit =
+    setTransformation(matrix4f(from, block))
+
+public inline fun DisplayElement.transformation(from: FloatBuffer, block: Matrix4f.() -> Unit): Unit =
+    setTransformation(matrix4f(from, block))
 
 public inline fun DisplayElement.transform(block: Matrix4f.() -> Unit): Unit = transformation {
     translation(translation)
