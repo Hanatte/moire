@@ -135,7 +135,9 @@ public class AttachmentRemovedScope @PublishedApi internal constructor(
 )
 
 public inline fun ElementHolder.onAttachmentRemoved(crossinline block: AttachmentRemovedScope.() -> Unit): AttachmentRemovedListener =
-    subscribe(AttachmentRemovedListener { oldAttachment -> AttachmentRemovedScope(oldAttachment).block() })
+    subscribe(AttachmentRemovedListener { oldAttachment ->
+        AttachmentRemovedScope(oldAttachment).block()
+    })
 
 public class AttachmentSetScope @PublishedApi internal constructor(
     public val attachment: HolderAttachment,
@@ -143,7 +145,9 @@ public class AttachmentSetScope @PublishedApi internal constructor(
 )
 
 public inline fun ElementHolder.onAttachmentSet(crossinline block: AttachmentSetScope.() -> Unit): AttachmentSetListener =
-    subscribe(AttachmentSetListener { attachment, oldAttachment -> AttachmentSetScope(attachment, oldAttachment).block() })
+    subscribe(AttachmentSetListener { attachment, oldAttachment ->
+        AttachmentSetScope(attachment, oldAttachment).block()
+    })
 
 public class WatchingScope @PublishedApi internal constructor(
     public val networkHandler: ServerPlayNetworkHandler
@@ -184,7 +188,11 @@ public inline fun ElementHolder.onTick(crossinline block: TickScope.() -> Unit):
 public fun ElementHolder.startRiding(entity: Entity): Unit =
     VirtualEntityUtils.addVirtualPassenger(entity, *entityIds.toIntArray())
 
-public fun ElementHolder.chunkAttachment(world: ServerWorld, pos: Vec3d, isTicking: Boolean = false): HolderAttachment =
+public fun ElementHolder.chunkAttachment(
+    world: ServerWorld,
+    pos: Vec3d,
+    isTicking: Boolean = false
+): HolderAttachment =
     if (isTicking) ChunkAttachment.ofTicking(this, world, pos) else ChunkAttachment.of(this, world, pos)
 
 public fun ElementHolder.chunkAttachment(
@@ -194,7 +202,10 @@ public fun ElementHolder.chunkAttachment(
 ): HolderAttachment =
     if (isTicking) ChunkAttachment.ofTicking(this, world, pos) else ChunkAttachment.of(this, world, pos)
 
-public fun ElementHolder.entityAttachment(entity: Entity, isTicking: Boolean = false): EntityAttachment =
+public fun ElementHolder.entityAttachment(
+    entity: Entity,
+    isTicking: Boolean = false
+): EntityAttachment =
     if (isTicking) EntityAttachment.ofTicking(this, entity) else EntityAttachment.of(this, entity)
 
 @Deprecated(
