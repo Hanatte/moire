@@ -7,6 +7,14 @@ import net.minecraft.entity.Entity
 import org.joml.*
 import java.nio.FloatBuffer
 
+public val DisplayElement.transformation: Matrix4fc
+    get() = matrix4f {
+        translation(translation)
+        rotate(leftRotation)
+        scale(scale)
+        rotate(rightRotation)
+    }
+
 public inline fun blockDisplayElement(block: BlockDisplayElement.() -> Unit): BlockDisplayElement =
     BlockDisplayElement().apply(block)
 
@@ -49,13 +57,7 @@ public inline fun DisplayElement.transformation(from: Matrix4dc, block: Matrix4f
 public inline fun DisplayElement.transformation(from: FloatBuffer, block: Matrix4f.() -> Unit): Unit =
     setTransformation(matrix4f(from, block))
 
-public inline fun DisplayElement.transform(block: Matrix4f.() -> Unit): Unit = transformation {
-    translation(translation)
-    rotate(leftRotation)
-    scale(scale)
-    rotate(rightRotation)
-    block()
-}
+public inline fun DisplayElement.transform(block: Matrix4f.() -> Unit): Unit = transformation(transformation, block)
 
 public fun DisplayElement.startInterpolation(duration: Int) {
     interpolationDuration = duration
