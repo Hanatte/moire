@@ -23,6 +23,27 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.Vec3d
 import kotlin.reflect.KClass
 
+public val ElementHolder.displayElements: List<DisplayElement>
+    get() = elements<DisplayElement>()
+
+public val ElementHolder.blockDisplayElements: List<BlockDisplayElement>
+    get() = elements<BlockDisplayElement>()
+
+public val ElementHolder.interactionElements: List<InteractionElement>
+    get() = elements<InteractionElement>()
+
+public val ElementHolder.itemDisplayElements: List<ItemDisplayElement>
+    get() = elements<ItemDisplayElement>()
+
+public val ElementHolder.markerElements: List<MarkerElement>
+    get() = elements<MarkerElement>()
+
+public val ElementHolder.mobAnchorElements: List<MobAnchorElement>
+    get() = elements<MobAnchorElement>()
+
+public val ElementHolder.textDisplayElements: List<TextDisplayElement>
+    get() = elements<TextDisplayElement>()
+
 public inline fun elementHolder(block: ElementHolder.() -> Unit): ElementHolder = ElementHolder().apply(block)
 
 public inline fun ElementHolder.blockDisplayElement(block: BlockDisplayElement.() -> Unit): BlockDisplayElement =
@@ -42,6 +63,25 @@ public inline fun ElementHolder.mobAnchorElement(block: MobAnchorElement.() -> U
 
 public inline fun ElementHolder.textDisplayElement(block: TextDisplayElement.() -> Unit): TextDisplayElement =
     addElement(jp.fishmans.moire.elements.textDisplayElement(block))
+
+public inline fun <reified T : VirtualElement> ElementHolder.elements(): List<T> = elements.filterIsInstance<T>()
+
+public inline fun <reified T : VirtualElement> ElementHolder.elements(block: T.() -> Unit): Unit =
+    elements<T>().forEach(block)
+
+public fun ElementHolder.displayElements(block: DisplayElement.() -> Unit): Unit = elements(block)
+
+public fun ElementHolder.blockDisplayElements(block: BlockDisplayElement.() -> Unit): Unit = elements(block)
+
+public fun ElementHolder.interactionElements(block: InteractionElement.() -> Unit): Unit = elements(block)
+
+public fun ElementHolder.itemDisplayElements(block: ItemDisplayElement.() -> Unit): Unit = elements(block)
+
+public fun ElementHolder.markerElements(block: MarkerElement.() -> Unit): Unit = elements(block)
+
+public fun ElementHolder.mobAnchorElements(block: MobAnchorElement.() -> Unit): Unit = elements(block)
+
+public fun ElementHolder.textDisplayElements(block: TextDisplayElement.() -> Unit): Unit = elements(block)
 
 public fun <T : Listener> ElementHolder.addListener(listenerClass: Class<T>, listener: T): Unit =
     (this as ElementHolderExtensions).`moire$addListener`(listenerClass, listener)
