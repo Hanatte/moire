@@ -24,6 +24,10 @@ public inline fun mobAnchorElement(block: MobAnchorElement.() -> Unit): MobAncho
 public inline fun textDisplayElement(block: TextDisplayElement.() -> Unit): TextDisplayElement =
     TextDisplayElement().apply(block)
 
+public fun VirtualElement.remove(): Boolean = holder?.removeElement(this) != null
+
+public fun VirtualElement.removeWithoutUpdates(): Boolean = holder?.removeElementWithoutUpdates(this) != null
+
 public fun VirtualElement.startRiding(entity: Entity): Unit =
     VirtualEntityUtils.addVirtualPassenger(entity, *entityIds.toIntArray())
 
