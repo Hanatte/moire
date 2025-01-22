@@ -113,7 +113,7 @@ public fun <T : Listener> ElementHolder.unsubscribe(listener: T): T =
     listener.also { removeListener(it) }
 
 @Deprecated(
-    message = "Use 'subscribe(listener)' instead.",
+    message = "Use 'subscribe' instead.",
     replaceWith = ReplaceWith("subscribe(listener)")
 )
 public fun <T : Listener> ElementHolder.listen(listener: T): T =
@@ -198,28 +198,28 @@ public fun ElementHolder.entityAttachment(entity: Entity, isTicking: Boolean = f
     if (isTicking) EntityAttachment.ofTicking(this, entity) else EntityAttachment.of(this, entity)
 
 @Deprecated(
-    message = "Use 'chunkAttachment(world, pos, isTicking)' instead.",
+    message = "Use 'chunkAttachment' instead.",
     replaceWith = ReplaceWith("chunkAttachment(world, pos, false)")
 )
 public fun ElementHolder.chunkAttachment(world: ServerWorld, pos: Vec3d): HolderAttachment =
     ChunkAttachment.of(this, world, pos)
 
 @Deprecated(
-    message = "Use 'chunkAttachment(world, pos, isTicking)' instead.",
+    message = "Use 'chunkAttachment' instead.",
     replaceWith = ReplaceWith("chunkAttachment(world, pos, true)")
 )
 public fun ElementHolder.chunkAttachmentTicking(world: ServerWorld, pos: Vec3d): HolderAttachment =
     ChunkAttachment.ofTicking(this, world, pos)
 
 @Deprecated(
-    message = "Use 'entityAttachment(entity, isTicking)' instead.",
+    message = "Use 'entityAttachment' instead.",
     replaceWith = ReplaceWith("entityAttachment(entity, false)")
 )
 public fun ElementHolder.entityAttachment(entity: Entity): EntityAttachment =
     EntityAttachment.of(this, entity)
 
 @Deprecated(
-    message = "Use 'entityAttachment(entity, isTicking)' instead.",
+    message = "Use 'entityAttachment' instead.",
     replaceWith = ReplaceWith("entityAttachment(entity, true)")
 )
 public fun ElementHolder.entityAttachmentTicking(entity: Entity): EntityAttachment =
