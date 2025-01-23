@@ -10,12 +10,14 @@ repositories {
 
 val minecraftVersion: String by project
 val yarnVersion: String by project
+val fabricApiVersion: String by project
 val fabricLoaderVersion: String by project
 val polymerVersion: String by project
 
 dependencies {
     minecraft("com.mojang:minecraft:$minecraftVersion")
     mappings("net.fabricmc:yarn:$yarnVersion:v2")
+    modCompileOnly("net.fabricmc.fabric-api:fabric-api:$fabricApiVersion")
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
     modImplementation("eu.pb4:polymer-virtual-entity:$polymerVersion")
 }
