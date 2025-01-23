@@ -4,8 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "ElementHolderMixin",
-    "EntityMixin",
-    "ServerWorldServerEntityHandlerMixin"
+    "EntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
