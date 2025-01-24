@@ -7,6 +7,8 @@
   "environment": "*",
   "entrypoints": {
     "main": [
+      "jp.fishmans.moire.decorators.entities.EntityLoadDecoratorTest",
+      "jp.fishmans.moire.decorators.entities.EntityUnloadDecoratorTest"
     ]
   },
   "depends": {
