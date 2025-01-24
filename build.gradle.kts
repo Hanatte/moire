@@ -18,7 +18,6 @@ dependencies {
     minecraft("com.mojang:minecraft:$minecraftVersion")
     mappings("net.fabricmc:yarn:$yarnVersion:v2")
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricApiVersion")
     modImplementation("eu.pb4:polymer-virtual-entity:$polymerVersion")
 }
 

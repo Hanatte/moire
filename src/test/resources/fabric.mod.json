@@ -7,8 +7,6 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "jp.fishmans.moire.event.EntityPostLoadCallbackTest",
-      "jp.fishmans.moire.event.EntityPreLoadCallbackTest"
     ]
   },
   "depends": {
