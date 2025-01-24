@@ -18,7 +18,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 @Mixin(value = ElementHolder.class, remap = false)
-public abstract class ElementHolderMixin implements ElementHolderExtensions {
+abstract class ElementHolderMixin implements ElementHolderExtensions {
     @Unique
     private final List<Listener> moire$listeners = new CopyOnWriteArrayList<>();
 

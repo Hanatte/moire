@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = Entity.class)
-public abstract class EntityMixin {
+abstract class EntityMixin {
     @Inject(method = "setRemoved", at = @At(value = "HEAD"))
     private void moire$beforeSetRemove(Entity.RemovalReason reason, CallbackInfo ci) {
         var entity = (Entity) (Object) this;
