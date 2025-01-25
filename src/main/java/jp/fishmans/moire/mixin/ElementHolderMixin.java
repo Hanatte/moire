@@ -66,11 +66,11 @@ abstract class ElementHolderMixin implements ElementHolderExtensions {
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Leu/pb4/polymer/virtualentity/api/ElementHolder;onTick()V"))
     private void moire$beforeTick(CallbackInfo ci) {
-        moire$triggerEvent(PreTickListener.class, PreTickListener::onTick);
+        moire$triggerEvent(PreTickListener.class, PreTickListener::onPreTick);
     }
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Ljava/util/Iterator;hasNext()Z", shift = At.Shift.AFTER))
     private void moire$afterTick(CallbackInfo ci) {
-        moire$triggerEvent(PostTickListener.class, PostTickListener::onTick);
+        moire$triggerEvent(PostTickListener.class, PostTickListener::onPostTick);
     }
 }
