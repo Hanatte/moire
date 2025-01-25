@@ -7,6 +7,36 @@ for [polymer-virtual-entity](https://github.com/Patbox/polymer). With moire, you
 > **Note:** The API is subject to change without backward compatibility until version 1.0.0. Please be aware of
 > potential changes.
 
+## Gradle Setup
+
+### Groovy
+
+```groovy
+repositories {
+    maven { url 'https://maven.nucleoid.xyz/' }
+    maven { url 'https://api.modrinth.com/maven' }
+}
+
+dependencies {
+    implementation 'eu.pb4:polymer-virtual-entity:POLYMER_VERSION'
+    implementation 'maven.modrinth:moire:MOIRE_VERSION'
+}
+```
+
+### Kotlin DSL
+
+```kotlin
+repositories {
+    maven("https://maven.nucleoid.xyz/")
+    maven("https://api.modrinth.com/maven")
+}
+
+dependencies {
+    implementation("eu.pb4:polymer-virtual-entity:POLYMER_VERSION")
+    implementation("maven.modrinth:moire:MOIRE_VERSION")
+}
+```
+
 ## Usage
 
 Here is a simple example.
