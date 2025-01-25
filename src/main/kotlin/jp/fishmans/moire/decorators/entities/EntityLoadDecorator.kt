@@ -10,7 +10,7 @@ public abstract class EntityLoadDecorator<T : Entity>(
     public val entityClass: KClass<T>
 ) : Decorator<EntityLoadDecoratorContext<T>>
 
-public class EntityLoadDecoratorContext<T : Entity>(
+public data class EntityLoadDecoratorContext<T : Entity>(
     public val entity: T,
     public val world: ServerWorld
 ) : DecoratorContext

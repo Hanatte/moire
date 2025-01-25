@@ -10,7 +10,7 @@ public abstract class EntityUnloadDecorator<T : Entity>(
     public val entityClass: KClass<T>
 ) : Decorator<EntityUnloadDecoratorContext<T>>
 
-public class EntityUnloadDecoratorContext<T : Entity>(
+public data class EntityUnloadDecoratorContext<T : Entity>(
     public val entity: T,
     public val world: ServerWorld
 ) : DecoratorContext
