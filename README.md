@@ -18,8 +18,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'eu.pb4:polymer-virtual-entity:POLYMER_VERSION'
-    implementation 'maven.modrinth:moire:MOIRE_VERSION'
+    modImplementation 'eu.pb4:polymer-virtual-entity:POLYMER_VERSION'
+    modImplementation 'maven.modrinth:moire:MOIRE_VERSION'
 }
 ```
 
@@ -32,8 +32,8 @@ repositories {
 }
 
 dependencies {
-    implementation("eu.pb4:polymer-virtual-entity:POLYMER_VERSION")
-    implementation("maven.modrinth:moire:MOIRE_VERSION")
+    modImplementation("eu.pb4:polymer-virtual-entity:POLYMER_VERSION")
+    modImplementation("maven.modrinth:moire:MOIRE_VERSION")
 }
 ```
 
