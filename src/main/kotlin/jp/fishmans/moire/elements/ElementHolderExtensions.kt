@@ -156,23 +156,34 @@ public inline fun ElementHolder.onWatchingStopped(crossinline block: WatchingSco
     subscribe(WatchingStoppedListener { networkHandler -> WatchingScope(networkHandler).block() })
 
 public class TickScope @PublishedApi internal constructor(
-    public val index: Int
+    public val index: Int,
+    private val cancelAction: () -> Unit
 ) {
     public val isFirst: Boolean
         get() = index == 0
 
     public val ordinal: Int
         get() = index + 1
+
+    public fun cancel(): Unit = cancelAction()
 }
 
 public inline fun ElementHolder.onPreTick(crossinline block: TickScope.() -> Unit): PreTickListener {
     var index = 0
-    return subscribe(PreTickListener { TickScope(index++).block() })
+    return subscribe(
+        object : PreTickListener {
+            override fun onPreTick() = TickScope(index++) { removeListener(this) }.block()
+        }
+    )
 }
 
 public inline fun ElementHolder.onPostTick(crossinline block: TickScope.() -> Unit): PostTickListener {
     var index = 0
-    return subscribe(PostTickListener { TickScope(index++).block() })
+    return subscribe(
+        object : PostTickListener {
+            override fun onPostTick() = TickScope(index++) { removeListener(this) }.block()
+        }
+    )
 }
 
 public inline fun ElementHolder.onTick(crossinline block: TickScope.() -> Unit): PreTickListener =
