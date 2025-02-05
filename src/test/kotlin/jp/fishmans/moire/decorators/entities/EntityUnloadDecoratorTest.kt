@@ -3,12 +3,13 @@ package jp.fishmans.moire.decorators.entities
 import jp.fishmans.moire.decorators.DecoratorRegistries
 import jp.fishmans.moire.elements.*
 import net.fabricmc.api.ModInitializer
+import net.minecraft.entity.EntityType
 import net.minecraft.entity.decoration.DisplayEntity
 import net.minecraft.entity.mob.CreeperEntity
 import net.minecraft.text.Text
 
 class EntityUnloadDecoratorTest : ModInitializer {
-    private class TestEntityUnloadDecorator : EntityUnloadDecorator<CreeperEntity>(CreeperEntity::class) {
+    private class TestEntityUnloadDecorator : EntityUnloadDecorator<CreeperEntity>(EntityType.CREEPER) {
         override fun decorate(context: EntityUnloadDecoratorContext<CreeperEntity>) {
             elementHolder {
                 textDisplayElement {

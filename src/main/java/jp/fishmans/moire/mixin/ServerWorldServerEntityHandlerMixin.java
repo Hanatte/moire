@@ -25,7 +25,7 @@ abstract class ServerWorldServerEntityHandlerMixin {
     private void moire$startTracking(Entity entity, CallbackInfo ci) {
         var context = new EntityLoadDecoratorContext<>(entity, field_26936);
         for (var decorator : DecoratorRegistries.ENTITY_LOAD.getDecorators()) {
-            if (decorator.getEntityClass().isInstance(entity)) {
+            if (decorator.getEntityType().equals(entity.getType())) {
                 ((EntityLoadDecorator<Entity>) decorator).decorate(context);
             }
         }
@@ -36,7 +36,7 @@ abstract class ServerWorldServerEntityHandlerMixin {
     private void moire$stopTracking(Entity entity, CallbackInfo ci) {
         var context = new EntityUnloadDecoratorContext<>(entity, field_26936);
         for (var decorator : DecoratorRegistries.ENTITY_UNLOAD.getDecorators()) {
-            if (decorator.getEntityClass().isInstance(entity)) {
+            if (decorator.getEntityType().equals(entity.getType())) {
                 ((EntityUnloadDecorator<Entity>) decorator).decorate(context);
             }
         }

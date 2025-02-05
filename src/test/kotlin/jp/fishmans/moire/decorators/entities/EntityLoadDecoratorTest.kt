@@ -4,11 +4,12 @@ import jp.fishmans.moire.decorators.DecoratorRegistries
 import jp.fishmans.moire.elements.*
 import jp.fishmans.moire.matrices.rotateLocalYDegrees
 import net.fabricmc.api.ModInitializer
+import net.minecraft.entity.EntityType
 import net.minecraft.entity.mob.CreeperEntity
 import net.minecraft.item.Items
 
 class EntityLoadDecoratorTest : ModInitializer {
-    private class TestEntityLoadDecorator : EntityLoadDecorator<CreeperEntity>(CreeperEntity::class) {
+    private class TestEntityLoadDecorator : EntityLoadDecorator<CreeperEntity>(EntityType.CREEPER) {
         override fun decorate(context: EntityLoadDecoratorContext<CreeperEntity>) {
             elementHolder {
                 itemDisplayElement {

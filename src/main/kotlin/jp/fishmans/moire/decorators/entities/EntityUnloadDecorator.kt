@@ -3,11 +3,11 @@ package jp.fishmans.moire.decorators.entities
 import jp.fishmans.moire.decorators.Decorator
 import jp.fishmans.moire.decorators.DecoratorContext
 import net.minecraft.entity.Entity
+import net.minecraft.entity.EntityType
 import net.minecraft.server.world.ServerWorld
-import kotlin.reflect.KClass
 
 public abstract class EntityUnloadDecorator<T : Entity>(
-    public val entityClass: KClass<T>
+    public val entityType: EntityType<T>
 ) : Decorator<EntityUnloadDecoratorContext<T>>
 
 public data class EntityUnloadDecoratorContext<T : Entity>(
