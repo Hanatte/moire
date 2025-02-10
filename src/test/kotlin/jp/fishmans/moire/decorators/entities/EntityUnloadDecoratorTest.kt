@@ -3,16 +3,16 @@ package jp.fishmans.moire.decorators.entities
 import jp.fishmans.moire.decorators.DecoratorRegistries
 import jp.fishmans.moire.elements.*
 import net.fabricmc.api.ModInitializer
+import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.decoration.DisplayEntity
-import net.minecraft.entity.mob.CreeperEntity
 import net.minecraft.text.Text
 
 class EntityUnloadDecoratorTest : ModInitializer {
-    private class TestEntityUnloadDecorator : EntityUnloadDecorator<CreeperEntity> {
-        override val entityType: EntityType<out CreeperEntity> = EntityType.CREEPER
-
-        override fun decorate(context: EntityUnloadDecoratorContext<out CreeperEntity>) {
+    private class TestEntityUnloadDecorator(override val entityType: EntityType<out Entity>) :
+        EntityUnloadDecorator<Entity>
+    {
+        override fun decorate(context: EntityUnloadDecoratorContext<out Entity>) {
             elementHolder {
                 textDisplayElement {
                     transformation {
@@ -40,6 +40,6 @@ class EntityUnloadDecoratorTest : ModInitializer {
     }
 
     override fun onInitialize() {
-        DecoratorRegistries.ENTITY_UNLOAD.register(TestEntityUnloadDecorator())
+        DecoratorRegistries.ENTITY_UNLOAD.register(TestEntityUnloadDecorator(EntityType.CREEPER))
     }
 }
