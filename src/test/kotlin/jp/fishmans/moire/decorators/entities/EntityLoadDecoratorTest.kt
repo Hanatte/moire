@@ -9,7 +9,9 @@ import net.minecraft.entity.mob.CreeperEntity
 import net.minecraft.item.Items
 
 class EntityLoadDecoratorTest : ModInitializer {
-    private class TestEntityLoadDecorator : EntityLoadDecorator<CreeperEntity>(EntityType.CREEPER) {
+    private class TestEntityLoadDecorator : EntityLoadDecorator<CreeperEntity> {
+        override val entityType: EntityType<out CreeperEntity> = EntityType.CREEPER
+
         override fun decorate(context: EntityLoadDecoratorContext<out CreeperEntity>) {
             elementHolder {
                 itemDisplayElement {

@@ -9,7 +9,9 @@ import net.minecraft.entity.mob.CreeperEntity
 import net.minecraft.text.Text
 
 class EntityUnloadDecoratorTest : ModInitializer {
-    private class TestEntityUnloadDecorator : EntityUnloadDecorator<CreeperEntity>(EntityType.CREEPER) {
+    private class TestEntityUnloadDecorator : EntityUnloadDecorator<CreeperEntity> {
+        override val entityType: EntityType<out CreeperEntity> = EntityType.CREEPER
+
         override fun decorate(context: EntityUnloadDecoratorContext<out CreeperEntity>) {
             elementHolder {
                 textDisplayElement {

@@ -6,9 +6,9 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
 import net.minecraft.server.world.ServerWorld
 
-public abstract class EntityLoadDecorator<T : Entity>(
+public interface EntityLoadDecorator<T : Entity> : Decorator<EntityLoadDecoratorContext<out T>> {
     public val entityType: EntityType<out T>
-) : Decorator<EntityLoadDecoratorContext<out T>>
+}
 
 public data class EntityLoadDecoratorContext<T : Entity>(
     public val entity: T,
