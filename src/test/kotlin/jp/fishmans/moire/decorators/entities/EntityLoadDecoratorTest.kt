@@ -10,7 +10,7 @@ import net.minecraft.item.Items
 
 class EntityLoadDecoratorTest : ModInitializer {
     private class TestEntityLoadDecorator : EntityLoadDecorator<CreeperEntity>(EntityType.CREEPER) {
-        override fun decorate(context: EntityLoadDecoratorContext<CreeperEntity>) {
+        override fun decorate(context: EntityLoadDecoratorContext<out CreeperEntity>) {
             elementHolder {
                 itemDisplayElement {
                     transformation {
