@@ -42,19 +42,19 @@ public fun VirtualElement.startRiding(entity: Entity): Unit =
 
 public inline fun DisplayElement.transformation(block: Matrix4f.() -> Unit): Unit = setTransformation(matrix4f(block))
 
-public inline fun DisplayElement.transformation(from: Matrix3fc, block: Matrix4f.() -> Unit): Unit =
+public inline fun DisplayElement.transformation(from: Matrix3fc, block: Matrix4f.() -> Unit = {}): Unit =
     setTransformation(matrix4f(from, block))
 
-public inline fun DisplayElement.transformation(from: Matrix4fc, block: Matrix4f.() -> Unit): Unit =
+public inline fun DisplayElement.transformation(from: Matrix4fc, block: Matrix4f.() -> Unit = {}): Unit =
     setTransformation(matrix4f(from, block))
 
-public inline fun DisplayElement.transformation(from: Matrix4x3fc, block: Matrix4f.() -> Unit): Unit =
+public inline fun DisplayElement.transformation(from: Matrix4x3fc, block: Matrix4f.() -> Unit = {}): Unit =
     setTransformation(matrix4f(from, block))
 
-public inline fun DisplayElement.transformation(from: Matrix4dc, block: Matrix4f.() -> Unit): Unit =
+public inline fun DisplayElement.transformation(from: Matrix4dc, block: Matrix4f.() -> Unit = {}): Unit =
     setTransformation(matrix4f(from, block))
 
-public inline fun DisplayElement.transformation(from: FloatBuffer, block: Matrix4f.() -> Unit): Unit =
+public inline fun DisplayElement.transformation(from: FloatBuffer, block: Matrix4f.() -> Unit = {}): Unit =
     setTransformation(matrix4f(from, block))
 
 public inline fun DisplayElement.transform(block: Matrix4f.() -> Unit): Unit = transformation(transformation, block)
